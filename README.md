@@ -1,0 +1,1 @@
+amzn-watchlist-price-check
