@@ -25,7 +25,6 @@ If you put all your books in a public whish list we can parse the list and see t
   Wishlist Id: `3GMM56QSK63GT`
 2. You can set the max price you want to pay for any given book. See [Price](#price) for details
 
-
 ## Price
 
 The max price comparison uses the whole dollar amount to avoid extra conversion and rounding with cents.
@@ -44,4 +43,12 @@ The out is an HTML formatted string meant to be placed in an email
 <b>Name:</b> Constitution: Book 1 of The Legacy Fleet Series
 <b>Price:</b> $3.99
 <a href="https://smile.amazon.com/dp/B010L6JTO0/?coliid=I17MWIZQ9RA5TN&colid=1DJLN9PNW8R59&psc=0">Buy Now</a>
+```
+
+## Timestamp
+
+At the top of each email it will give you the time the list was last fetched
+
+```
+Books fetched on Sun Sep 15 13:23:48 CEST 2019
 ```
