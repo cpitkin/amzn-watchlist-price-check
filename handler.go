@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 
+	handler "github.com/openfaas-incubator/go-function-sdk"
+
 	"github.com/gocolly/colly"
 )
 
@@ -52,15 +54,15 @@ func parseList(e *colly.HTMLElement) {
 	})
 }
 
-func Handle(req []byte) string {
+func Handle(req handler.Request) (handler.Response, error) {
 	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/amzn_wishlist_ids")
 	if err != nil {
-		return err.Error()
+		return handler.Response{}, err
 	}
 
 	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapier_webhook")
 	if err != nil {
-		return err.Error()
+		return handler.Response{}, err
 	}
 
 	wishlistIds := strings.Split(string(wishlistIdsString), ",")
@@ -107,7 +109,10 @@ func Handle(req []byte) string {
 
 	res, err := http.Post(string(zapierWebhook), "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
-		return err.Error()
+		return handler.Response{}, err
 	}
-	return string(res.Status)
+
+	return handler.Response{
+		Body: []byte(res.Status),
+	}, err
 }
