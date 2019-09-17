@@ -1,12 +1,11 @@
 version: 1.0
 provider:
   name: openfaas
-  gateway: http:/gateway.openfaas:8080/
+  gateway: http://127.0.0.1:8080
 functions:
   amzn-watchlist-price-check:
     lang: golang-http
     handler: .
-    image: cpitkin/amzn-watchlist-price-check:latest
+    image: cpitkin/amzn-watchlist-price-check
     secrets:
-      - wishlistIds
-      - zapierWebhook
+      - amzn-watchlist-price-check
