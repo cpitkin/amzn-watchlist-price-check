@@ -55,7 +55,7 @@ func parseList(e *colly.HTMLElement) {
 }
 
 func Handle(req handler.Request) (handler.Response, error) {
-	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/amznwishlistIds")
+	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistIds")
 	if err != nil {
 		return handler.Response{}, err
 	}
