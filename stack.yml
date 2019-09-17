@@ -9,3 +9,7 @@ functions:
     image: cpitkin/amzn-watchlist-price-check
     secrets:
       - amzn-watchlist-price-check
+    environment:
+      read_timeout: 60s
+      write_timeout: 60s
+      hard_timeout: 120s
