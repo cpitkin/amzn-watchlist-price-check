@@ -55,12 +55,12 @@ func parseList(e *colly.HTMLElement) {
 }
 
 func Handle(req handler.Request) (handler.Response, error) {
-	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/amzn_wishlist_ids")
+	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/amznwishlistIds")
 	if err != nil {
 		return handler.Response{}, err
 	}
 
-	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapier_webhook")
+	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapierWebhook")
 	if err != nil {
 		return handler.Response{}, err
 	}
