@@ -7,6 +7,9 @@ functions:
     lang: golang-http
     handler: .
     image: cpitkin/amzn-watchlist-price-check
+    annotations:
+      topic: cron-function
+      schedule: "0 6,18 * * *"
     secrets:
       - amzn-watchlist-price-check
     environment:
