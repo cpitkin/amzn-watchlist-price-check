@@ -37,24 +37,28 @@ func parseList(e *colly.HTMLElement) {
 
 		wholePrice := strings.Split(e.ChildText("span.a-price-whole"), ".")
 
-		numPrice, err := strconv.ParseInt(wholePrice[0], 10, 64)
-		if err != nil {
-			panic(err)
-		}
-
-		if numPrice <= maxPrice {
-			book := Book{
-				Name:  e.ChildAttr("a.a-link-normal", "title"),
-				Price: e.ChildText("span.a-price > span.a-offscreen"),
-				Link:  "https://smile.amazon.com" + e.ChildAttr("a.a-link-normal", "href"),
+		if wholePrice[0] != "" {
+			numPrice, err := strconv.ParseInt(wholePrice[0], 10, 64)
+			if err != nil {
+				panic(err)
 			}
 
-			allBooks = append(allBooks, book)
+			if numPrice <= maxPrice {
+				book := Book{
+					Name:  e.ChildAttr("a.a-link-normal", "title"),
+					Price: e.ChildText("span.a-price > span.a-offscreen"),
+					Link:  "https://smile.amazon.com" + e.ChildAttr("a.a-link-normal", "href"),
+				}
+
+				allBooks = append(allBooks, book)
+			}
 		}
 	})
 }
 
 func Handle(req handler.Request) (handler.Response, error) {
+	var err error
+
 	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistIds")
 	if err != nil {
 		return handler.Response{}, err
@@ -74,7 +78,7 @@ func Handle(req handler.Request) (handler.Response, error) {
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*.amazon.*",
 		Parallelism: 1,
-		Delay:       2 * time.Second,
+		Delay:       1 * time.Second,
 	})
 
 	c.OnRequest(func(r *colly.Request) {
@@ -82,7 +86,9 @@ func Handle(req handler.Request) (handler.Response, error) {
 	})
 
 	c.OnHTML("#g-items", func(e *colly.HTMLElement) {
+
 		parseList(e)
+
 		seeMoreLink := e.ChildAttr("a.wl-see-more", "href")
 		if seeMoreLink != "" {
 			c.Visit("https://smile.amazon.com" + seeMoreLink)
@@ -113,6 +119,9 @@ func Handle(req handler.Request) (handler.Response, error) {
 	}
 
 	return handler.Response{
+		Header: map[string][]string{
+			"Status": []string{res.Status},
+		},
 		Body: []byte(res.Status),
 	}, err
 }
