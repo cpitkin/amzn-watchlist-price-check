@@ -7,8 +7,6 @@ functions:
     lang: golang-http
     handler: .
     image: cpitkin/amzn-watchlist-price-check
-    labels:
-      com.openfaas.scale.zero: "false"
     annotations:
       topic: cron-function
       schedule: "0 6,18 * * *"
@@ -18,4 +16,3 @@ functions:
       read_timeout: 20s
       write_timeout: 20s
       exec_timeout: 30s
-      write_debug: true
