@@ -26,14 +26,14 @@ type Book struct {
 	Link  string
 }
 
-// Collect all the books below a set price
-var allBooks = []Book{}
-
 // Price to the nearest whole number
 var maxPrice int64 = 2
 
-func parseList(e *colly.HTMLElement) {
-	e.ForEach("li.a-spacing-none", func(_ int, e *colly.HTMLElement) {
+func parseList(e *colly.HTMLElement) []Book {
+
+	var newBooks []Book
+
+	e.ForEach("li.g-item-sortable", func(_ int, e *colly.HTMLElement) {
 
 		wholePrice := strings.Split(e.ChildText("span.a-price-whole"), ".")
 
@@ -50,21 +50,24 @@ func parseList(e *colly.HTMLElement) {
 					Link:  "https://smile.amazon.com" + e.ChildAttr("a.a-link-normal", "href"),
 				}
 
-				allBooks = append(allBooks, book)
+				newBooks = append(newBooks, book)
 			}
 		}
 	})
+
+	return newBooks
 }
 
 func Handle(req handler.Request) (handler.Response, error) {
 	var err error
+	var allBooks, newBooksList []Book
 
-	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistIds")
+	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistids")
 	if err != nil {
 		return handler.Response{}, err
 	}
 
-	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapierWebhook")
+	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapierwebhook")
 	if err != nil {
 		return handler.Response{}, err
 	}
@@ -72,7 +75,7 @@ func Handle(req handler.Request) (handler.Response, error) {
 	wishlistIds := strings.Split(string(wishlistIdsString), ",")
 
 	c := colly.NewCollector(
-		colly.UserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"),
+		colly.UserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0"),
 	)
 
 	c.Limit(&colly.LimitRule{
@@ -85,15 +88,22 @@ func Handle(req handler.Request) (handler.Response, error) {
 		fmt.Println("Visiting: ", r.URL.String())
 	})
 
-	c.OnHTML("#g-items", func(e *colly.HTMLElement) {
+	c.OnHTML("ul#g-items", func(e *colly.HTMLElement) {
+		newBooksList = parseList(e)
 
-		parseList(e)
+		if len(newBooksList) != 0 {
+			allBooks = append(allBooks, newBooksList...)
+
+			fmt.Println("Books on Page: " + string(len(newBooksList)))
+		}
 
 		seeMoreLink := e.ChildAttr("a.wl-see-more", "href")
 		if seeMoreLink != "" {
 			c.Visit("https://smile.amazon.com" + seeMoreLink)
 		}
 	})
+
+	fmt.Println("Total Books Found: " + string(len(allBooks)))
 
 	for _, id := range wishlistIds {
 		c.Visit("https://smile.amazon.com/hz/wishlist/ls/" + id)
@@ -122,6 +132,5 @@ func Handle(req handler.Request) (handler.Response, error) {
 		Header: map[string][]string{
 			"Status": []string{res.Status},
 		},
-		Body: []byte(res.Status),
 	}, err
 }
