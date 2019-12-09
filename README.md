@@ -35,7 +35,7 @@ The max price comparison uses the whole dollar amount to avoid extra conversion 
 Actual book price: $2.99
 Max Price value: 2
 
-The above example will return any book that is $2.99 or lower.
+The above example will return any book that is $2.99 or lower. I may update this in the future to allow for cents.
 
 ## Output
 
