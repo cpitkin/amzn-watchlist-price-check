@@ -39,7 +39,7 @@ The above example will return any book that is $2.99 or lower.
 
 ## Output
 
-The out is an HTML formatted string meant to be placed in an email
+The out is an HTML formatted string meant to be placed in an email.
 
 ```html
 <b>Name:</b> Constitution: Book 1 of The Legacy Fleet Series
