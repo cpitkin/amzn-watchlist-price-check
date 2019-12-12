@@ -2,7 +2,7 @@
 
 [![OpenFaaS](https://img.shields.io/badge/openfaas-cloud-blue.svg)](https://www.openfaas.com)
 
-Checks prices of books on an Amazon public wishlist.
+Check the prices of books on an Amazon public wishlist.
 
 ## Why I built this tool
 
