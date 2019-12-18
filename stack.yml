@@ -8,7 +8,7 @@ functions:
     handler: .
     image: cpitkin/amzn-watchlist-price-check
     labels:
-      com.openfaas.scale.zero=true
+      com.openfaas.scale.zero: false
     annotations:
       topic: cron-function
       schedule: "0 6,18 * * *"
