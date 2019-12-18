@@ -103,8 +103,6 @@ func Handle(req handler.Request) (handler.Response, error) {
 		}
 	})
 
-	fmt.Println("Total Books Found: " + string(len(allBooks)))
-
 	for _, id := range wishlistIds {
 		c.Visit("https://smile.amazon.com/hz/wishlist/ls/" + id)
 	}
