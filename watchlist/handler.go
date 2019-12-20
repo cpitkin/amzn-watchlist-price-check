@@ -67,11 +67,6 @@ func Handle(req handler.Request) (handler.Response, error) {
 		return handler.Response{}, err
 	}
 
-	zapierWebhook, err := ioutil.ReadFile("/var/openfaas/secrets/zapierwebhook")
-	if err != nil {
-		return handler.Response{}, err
-	}
-
 	wishlistIds := strings.Split(string(wishlistIdsString), ",")
 
 	c := colly.NewCollector(
@@ -119,9 +114,11 @@ func Handle(req handler.Request) (handler.Response, error) {
 
 	jsonValues := map[string]string{"fetchedTime": fetchedTime, "books": emailString}
 
+	fmt.Println(jsonValues)
+
 	jsonValue, _ := json.Marshal(jsonValues)
 
-	res, err := http.Post(string(zapierWebhook), "application/json", bytes.NewBuffer(jsonValue))
+	res, err := http.Post("https://cpitkin.spaceage.industries/amzn-watchlist-email", "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return handler.Response{}, err
 	}

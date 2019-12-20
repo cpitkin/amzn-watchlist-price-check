@@ -29,6 +29,11 @@ github.com/kennygrant/sanitize
 github.com/openfaas-incubator/go-function-sdk
 # github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca
 github.com/saintfish/chardet
+# github.com/sendgrid/rest v2.4.1+incompatible
+github.com/sendgrid/rest
+# github.com/sendgrid/sendgrid-go v3.5.0+incompatible
+github.com/sendgrid/sendgrid-go
+github.com/sendgrid/sendgrid-go/helpers/mail
 # github.com/temoto/robotstxt v1.1.1
 github.com/temoto/robotstxt
 # golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297

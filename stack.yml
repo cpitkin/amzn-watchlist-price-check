@@ -5,7 +5,7 @@ provider:
 functions:
   amzn-watchlist-price-check:
     lang: golang-http
-    handler: .
+    handler: ./watchlist
     image: cpitkin/amzn-watchlist-price-check
     labels:
       com.openfaas.scale.zero: false
@@ -18,3 +18,7 @@ functions:
       read_timeout: 5s
       write_timeout: 60s
       exec_timeout: 45s
+  amzn-wishlist-email:
+    lang: golang-http
+    handler: ./amzn-wishlist-email
+    image: cpitkin/amzn-wishlist-email:latest
