@@ -1,0 +1,7 @@
+# github.com/openfaas-incubator/go-function-sdk v0.0.0-20191017092257-70701da50a91
+github.com/openfaas-incubator/go-function-sdk
+# github.com/sendgrid/rest v2.4.1+incompatible
+github.com/sendgrid/rest
+# github.com/sendgrid/sendgrid-go v3.5.0+incompatible
+github.com/sendgrid/sendgrid-go
+github.com/sendgrid/sendgrid-go/helpers/mail
