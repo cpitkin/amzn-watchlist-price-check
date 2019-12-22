@@ -8,12 +8,18 @@ package function
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 
 	handler "github.com/openfaas-incubator/go-function-sdk"
 
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 )
+
+type EmailBooks struct {
+	FetchedTime string `json:"fetchedTime"`
+	Books       string `json:"books"`
+}
 
 // Handle a function invocation
 func Handle(req handler.Request) (handler.Response, error) {
@@ -24,10 +30,21 @@ func Handle(req handler.Request) (handler.Response, error) {
 		return handler.Response{}, err
 	}
 
-	type EmailBooks struct {
-		FetchedTime string `json:"fetchedTime"`
-		Books       string `json:"books"`
+	fromEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/fromemail")
+	if err != nil {
+		return handler.Response{}, err
 	}
+
+	toEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/toemail")
+	if err != nil {
+		return handler.Response{}, err
+	}
+
+	var from *mail.Email
+	json.Unmarshal(fromEmailInput, &from)
+
+	var tos []*mail.Email
+	json.Unmarshal(toEmailInput, &tos)
 
 	var em EmailBooks
 	json.Unmarshal(req.Body, &em)
@@ -35,14 +52,10 @@ func Handle(req handler.Request) (handler.Response, error) {
 	m := mail.NewV3Mail()
 	p := mail.NewPersonalization()
 
-	from := mail.NewEmail("Charlie Pitkin", "charlie.pitkin@gmail.com")
 	m.SetFrom(from)
-	p.Subject = "Amazon Price Check"
 
-	tos := []*mail.Email{
-		mail.NewEmail("Celeste Lempke", "celeste.lempke@gmail.com"),
-		mail.NewEmail("Charlie Pitkin", "charlie.pitkin@gmail.com"),
-	}
+	p.Subject = "Amazon Watchlist Price Check"
+
 	p.AddTos(tos...)
 
 	c := mail.NewContent("text/plain", em.FetchedTime)
@@ -51,7 +64,9 @@ func Handle(req handler.Request) (handler.Response, error) {
 	c = mail.NewContent("text/html", em.Books)
 	m.AddContent(c)
 
-	client := sendgrid.NewSendClient(string(sendgridToken))
+	m.AddPersonalizations(p)
+
+	client := sendgrid.NewSendClient(strings.TrimSpace(string(sendgridToken)))
 	res, err := client.Send(m)
 	if err != nil {
 		return handler.Response{}, err
@@ -61,5 +76,6 @@ func Handle(req handler.Request) (handler.Response, error) {
 		Header: map[string][]string{
 			"Status": []string{string(res.StatusCode)},
 		},
+		Body: []byte(res.Body),
 	}, err
 }
