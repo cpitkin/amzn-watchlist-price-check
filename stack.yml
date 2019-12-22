@@ -16,8 +16,8 @@ functions:
       - amzn-watchlist-price-check
     environment:
       read_timeout: 5s
-      write_timeout: 60s
-      exec_timeout: 45s
+      write_timeout: 120s
+      exec_timeout: 60s
   amzn-watchlist-email:
     lang: golang-http
     handler: ./amzn-watchlist-email
