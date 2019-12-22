@@ -118,7 +118,7 @@ func Handle(req handler.Request) (handler.Response, error) {
 
 	jsonValue, _ := json.Marshal(jsonValues)
 
-	res, err := http.Post("http://gateway.openfaas:8080/async-function/amzn-watchlist-email", "application/json", bytes.NewBuffer(jsonValue))
+	res, err := http.Post("http://gateway.openfaas:8080/function/amzn-watchlist-email", "application/json", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		return handler.Response{}, err
 	}
