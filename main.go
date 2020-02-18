@@ -7,7 +7,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"go.uber.org/zap"
 )
 
 type Book struct {
@@ -23,6 +23,8 @@ type Book struct {
 	Price string
 	Link  string
 }
+
+var sugar = zap.NewExample().Sugar()
 
 // Price to the nearest whole number
 var maxPrice int64 = 2
@@ -38,7 +40,7 @@ func parseList(e *colly.HTMLElement) []Book {
 		if wholePrice[0] != "" {
 			numPrice, err := strconv.ParseInt(wholePrice[0], 10, 64)
 			if err != nil {
-				panic(err)
+				sugar.Error(err)
 			}
 
 			if numPrice <= maxPrice {
@@ -60,9 +62,11 @@ func main() {
 	var err error
 	var allBooks, newBooksList []Book
 
+	defer sugar.Sync()
+
 	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistids")
 	if err != nil {
-		panic(err)
+		sugar.Error(err)
 	}
 
 	wishlistIds := strings.Split(string(wishlistIdsString), ",")
@@ -78,7 +82,7 @@ func main() {
 	})
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting: ", r.URL.String())
+		sugar.Infof("Visiting: %s", r.URL.String())
 	})
 
 	c.OnHTML("ul#g-items", func(e *colly.HTMLElement) {
@@ -86,8 +90,6 @@ func main() {
 
 		if len(newBooksList) != 0 {
 			allBooks = append(allBooks, newBooksList...)
-
-			fmt.Println("Books on Page: " + string(len(newBooksList)))
 		}
 
 		seeMoreLink := e.ChildAttr("a.wl-see-more", "href")
@@ -110,27 +112,23 @@ func main() {
 
 	fetchedTime := "Books fetched on " + string(timeString.Format(time.UnixDate)+"<br>")
 
-	jsonValues := map[string]string{"fetchedTime": fetchedTime, "books": emailString}
-
-	fmt.Println(jsonValues)
-
 	sendEmail(fetchedTime, emailString)
 }
 
 func sendEmail(fetchedTime string, emailString string) {
 	sendgridToken, err := ioutil.ReadFile("/var/openfaas/secrets/sendgridtoken")
 	if err != nil {
-		panic(err)
+		sugar.Error(err)
 	}
 
 	fromEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/fromemail")
 	if err != nil {
-		panic(err)
+		sugar.Error(err)
 	}
 
 	toEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/toemail")
 	if err != nil {
-		panic(err)
+		sugar.Error(err)
 	}
 
 	var from *mail.Email
@@ -159,6 +157,8 @@ func sendEmail(fetchedTime string, emailString string) {
 	client := sendgrid.NewSendClient(strings.TrimSpace(string(sendgridToken)))
 	_, err = client.Send(m)
 	if err != nil {
-		panic(err)
+		sugar.Error(err)
 	}
+
+	sugar.Infof("Email sent: %s", time.Now())
 }
