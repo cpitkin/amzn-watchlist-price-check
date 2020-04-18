@@ -1,4 +1,4 @@
-# amzn-watchlist-price-check
+# amzn-wishlist-price-check
 
 Check the prices of books on an Amazon public wishlist.
 
