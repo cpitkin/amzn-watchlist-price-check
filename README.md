@@ -44,11 +44,3 @@ The out is an HTML formatted string meant to be placed in an email.
 <b>Price:</b> $3.99
 <a href="https://smile.amazon.com/dp/B010L6JTO0/?coliid=I17MWIZQ9RA5TN&colid=1DJLN9PNW8R59&psc=0">Buy Now</a>
 ```
-
-## Timestamp
-
-At the top of each email it will give you the time the list was last fetched
-
-```
-Books fetched on Sun Sep 15 13:23:48 CEST 2019
-```

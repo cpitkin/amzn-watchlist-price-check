@@ -64,7 +64,7 @@ func main() {
 
 	defer sugar.Sync()
 
-	wishlistIdsString, err := ioutil.ReadFile("/var/openfaas/secrets/wishlistids")
+	wishlistIdsString, err := ioutil.ReadFile("/var/amzn_wishlist_price_check/secrets/wishlistids")
 	if err != nil {
 		sugar.Error(err)
 	}
@@ -116,17 +116,17 @@ func main() {
 }
 
 func sendEmail(fetchedTime string, emailString string) {
-	sendgridToken, err := ioutil.ReadFile("/var/openfaas/secrets/sendgridtoken")
+	sendgridToken, err := ioutil.ReadFile("/var/amzn_wishlist_price_check/secrets/sendgridtoken")
 	if err != nil {
 		sugar.Error(err)
 	}
 
-	fromEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/fromemail")
+	fromEmailInput, err := ioutil.ReadFile("/var/amzn_wishlist_price_check/secrets/fromemail")
 	if err != nil {
 		sugar.Error(err)
 	}
 
-	toEmailInput, err := ioutil.ReadFile("/var/openfaas/secrets/toemail")
+	toEmailInput, err := ioutil.ReadFile("/var/amzn_wishlist_price_check/secrets/toemail")
 	if err != nil {
 		sugar.Error(err)
 	}
