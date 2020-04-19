@@ -146,7 +146,7 @@ func sendEmail(fetchedTime string, emailString string) {
 
 	p.AddTos(tos...)
 
-	c := mail.NewContent("text/plain", fetchedTime)
+	c := mail.NewContent("text/html", fetchedTime)
 	m.AddContent(c)
 
 	c = mail.NewContent("text/html", emailString)

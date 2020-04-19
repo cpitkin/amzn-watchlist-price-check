@@ -5,8 +5,8 @@ jobs:
     name: Go Checks
     runs-on: ubuntu-latest
     steps:
-    - name: go1.13 linter
-      uses: shoukoo/golang-pipeline/go1.13/linter@master
+    - name: go1.14 linter
+      uses: shoukoo/golang-pipeline/go1.14/linter@master
       with:
         GOLINT: on
         GOLINTPATH: pkg/controller
