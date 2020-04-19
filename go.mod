@@ -1,4 +1,4 @@
-module github.com/cpitkin/amzn-watchlist-price-check/amzn-watchlist-price-check
+module github.com/cpitkin/amzn-wishlist-price-check/amzn-wishlist-price-check
 
 go 1.14
 

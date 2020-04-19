@@ -82,7 +82,7 @@ func main() {
 	})
 
 	c.OnRequest(func(r *colly.Request) {
-		sugar.Infof("Visiting: %s", r.URL.String())
+		sugar.Debugf("Visiting: %s", r.URL.String())
 	})
 
 	c.OnHTML("ul#g-items", func(e *colly.HTMLElement) {
@@ -108,14 +108,10 @@ func main() {
 		emailString = emailString + "<br><b>Name:</b> " + book.Name + "<br><b>Price:</b> " + book.Price + "<br><a href=\"" + book.Link + "\">Buy Now</a><br>"
 	}
 
-	timeString := time.Now()
-
-	fetchedTime := "Books fetched on " + string(timeString.Format(time.UnixDate)+"<br>")
-
-	sendEmail(fetchedTime, emailString)
+	sendEmail(emailString)
 }
 
-func sendEmail(fetchedTime string, emailString string) {
+func sendEmail(emailString string) {
 	sendgridToken, err := ioutil.ReadFile("/var/amzn_wishlist_price_check/secrets/sendgridtoken")
 	if err != nil {
 		sugar.Error(err)
@@ -146,10 +142,7 @@ func sendEmail(fetchedTime string, emailString string) {
 
 	p.AddTos(tos...)
 
-	c := mail.NewContent("text/html", fetchedTime)
-	m.AddContent(c)
-
-	c = mail.NewContent("text/html", emailString)
+	c := mail.NewContent("text/html", emailString)
 	m.AddContent(c)
 
 	m.AddPersonalizations(p)
